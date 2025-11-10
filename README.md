@@ -272,13 +272,6 @@ The application uses the following constants (defined in `config/constants.go`):
 The API has CORS enabled for all origins. In production, you should restrict this to specific domains.
 
 ## License
+This project is licensed for personal and educational use only.
+Commercial use, redistribution, or use in any production environment is strictly prohibited without my explicit written permission.
 
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines here]
-
-## Support
-
-For issues and questions, please open an issue in the repository.
