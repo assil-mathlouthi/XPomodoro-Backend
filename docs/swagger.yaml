@@ -1,0 +1,754 @@
+basePath: /api/v1
+definitions:
+  types.AddingPomodoroPayload:
+    properties:
+      completed:
+        type: boolean
+      end_time:
+        type: string
+      session_duration:
+        type: integer
+      start_time:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  types.AuthPayload:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  types.ExtendedStats:
+    properties:
+      best_day:
+        type: integer
+      created_at:
+        type: string
+      current_streak:
+        type: integer
+      last_updated:
+        type: string
+      longest_streak:
+        type: integer
+      total_focus_minutes:
+        type: integer
+      total_pomodoros:
+        type: integer
+      user_id:
+        type: integer
+      xp_multiplier:
+        type: number
+    type: object
+  types.ForgotPasswordPayload:
+    properties:
+      username:
+        type: string
+    type: object
+  types.HeatMap:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  types.HeatMapEntry:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+    type: object
+  types.HeatMapPayload:
+    properties:
+      end_date:
+        type: string
+      start_date:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  types.HeatMapResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.HeatMapEntry'
+        type: array
+      user_id:
+        type: integer
+    type: object
+  types.Pomodoro:
+    properties:
+      completed:
+        type: boolean
+      created_at:
+        type: string
+      end_time:
+        type: string
+      id:
+        type: integer
+      session_duration:
+        type: integer
+      start_time:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  types.RankEntry:
+    properties:
+      rank:
+        type: integer
+      rank_id:
+        type: integer
+      user_id:
+        type: integer
+      username:
+        type: string
+      xp:
+        type: integer
+    type: object
+  types.ResetPasswordPayload:
+    properties:
+      code:
+        type: string
+      new_password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.Stats:
+    properties:
+      created_at:
+        type: string
+      current_streak:
+        type: integer
+      last_updated:
+        type: string
+      longest_streak:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  types.StatsPayload:
+    properties:
+      current_streak:
+        type: integer
+      longest_streak:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  types.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  types.UpdateEmailPayload:
+    properties:
+      new_email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.User:
+    properties:
+      country:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      password_hash:
+        type: string
+      rank_id:
+        type: integer
+      username:
+        type: string
+      xp:
+        type: integer
+    type: object
+  types.UserInfoUpdate:
+    properties:
+      country:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: A Gamified Pomodoro productivity tracker API.
+  title: XPomodoro Tracker API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT token
+      parameters:
+      - description: Auth payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AuthPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Login a user
+      tags:
+      - Auth
+  /password/forgot:
+    post:
+      consumes:
+      - application/json
+      description: Send a password reset code to the user's email if they have one
+        associated with their account
+      parameters:
+      - description: Forgot password payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ForgotPasswordPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Request password reset code
+      tags:
+      - Auth
+  /password/reset:
+    post:
+      consumes:
+      - application/json
+      description: Reset user password using the provided reset code
+      parameters:
+      - description: Reset password payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ResetPasswordPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Reset password with code
+      tags:
+      - Auth
+  /pomodoro:
+    post:
+      consumes:
+      - application/json
+      description: Create a new pomodoro session for a user
+      parameters:
+      - description: Pomodoro request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddingPomodoroPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.Pomodoro'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new pomodoro session
+      tags:
+      - pomodoros
+  /ranking/{country}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve ranking for users in a specific country ordered by XP
+        descending
+      parameters:
+      - description: Country code
+        in: path
+        name: country
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.RankEntry'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get local ranking by country
+      tags:
+      - ranking
+  /ranking/{country}/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the local rank entry for a specific user ID within a country
+      parameters:
+      - description: Country code
+        in: path
+        name: country
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RankEntry'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a user's local rank
+      tags:
+      - ranking
+  /ranking/global:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the global ranking list ordered by XP descending
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.RankEntry'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get global ranking
+      tags:
+      - ranking
+  /ranking/global/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the global rank entry for a specific user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RankEntry'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a user's global rank
+      tags:
+      - ranking
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: Auth payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AuthPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Register a user
+      tags:
+      - Auth
+  /stats:
+    post:
+      consumes:
+      - application/json
+      description: Add statistics for a user by ID
+      parameters:
+      - description: Stats update payload
+        in: body
+        name: stats
+        required: true
+        schema:
+          $ref: '#/definitions/types.Stats'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.Stats'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add user statistics
+      tags:
+      - stats
+    put:
+      consumes:
+      - application/json
+      description: Update statistics for a user by ID
+      parameters:
+      - description: Stats update payload
+        in: body
+        name: stats
+        required: true
+        schema:
+          $ref: '#/definitions/types.StatsPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Stats'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update user statistics
+      tags:
+      - stats
+  /stats/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get statistics for a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ExtendedStats'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user statistics
+      tags:
+      - stats
+  /stats/heatmap:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve heatmap data for a user within a specified date range.
+        Returns daily pomodoro counts including days with zero activity.
+      parameters:
+      - description: Heatmap query parameters including user ID and date range
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/types.HeatMapPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Heatmap data with user ID and daily counts
+          schema:
+            $ref: '#/definitions/types.HeatMapResponse'
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user heatmap data
+      tags:
+      - stats
+    put:
+      consumes:
+      - application/json
+      description: Create a new heatmap entry for a user on a specific date, or update
+        the count if an entry already exists. Uses UPSERT operation.
+      parameters:
+      - description: Heatmap entry with user ID, date, and pomodoro count
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/types.HeatMap'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated heatmap entry
+          schema:
+            $ref: '#/definitions/types.HeatMap'
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create or update heatmap entry
+      tags:
+      - stats
+  /users/{id}/country:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the country for a given user id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Country payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserInfoUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a user's country
+      tags:
+      - User
+  /users/email:
+    put:
+      consumes:
+      - application/json
+      description: Validates new email, generates token, stores pending update, and
+        sends verification email
+      parameters:
+      - description: Update email payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateEmailPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Request email update (sends verification email)
+      tags:
+      - User
+  /verify:
+    get:
+      description: Confirms pending email update by token and updates the user's email
+      parameters:
+      - description: Verification token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Verify email update via token
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'Provide your JWT token in the format: "Bearer <token>"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

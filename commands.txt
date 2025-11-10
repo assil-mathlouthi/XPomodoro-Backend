@@ -1,0 +1,7 @@
+-- database mirgration script
+goose -dir migrations mysql "root:@tcp(localhost:3306)/xpomodoro" up
+-- create new sql file
+goose create -s create_sessions_table sql
+
+-- generate swagger documentation
+swag init -d cmd,services/pomodoros,services/user,services/stats,services/ranking,types
